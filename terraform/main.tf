@@ -275,6 +275,13 @@ resource "aws_route_table_association" "fw_assoc" {
   route_table_id = aws_route_table.firewall_to_nat.id
 }
 
+resource "aws_route_table_association" "fw_assoc" {
+  count          = 3
+  subnet_id      = aws_subnet.beacon_firewall[count.index].id
+  route_table_id = aws_route_table.firewall_to_nat.id
+}
+
+
 
 
 
