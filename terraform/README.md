@@ -18,17 +18,22 @@ This Terraform configuration provisions a secure AWS VPC network across 3 Availa
 - Resource tagging (Name, Environment, etc.)
 
 ## How to Deploy
-1. **Configure variables:** Edit `terraform/variables.tf` or use a `terraform.tfvars` file to set region, AZs, CIDR blocks, and tags.
-2. **Initialize Terraform:**
+1. **Configure variables:** Edit `terraform/variables.tf` or use a `terraform.tfvars` file to set region, AZs, CIDR blocks, profile and tags.
+2. **Create aws profile**
+   - install aws cli in your local
+   - Run.
+   - aws configure -- profile beacon
+   - pass access and secret keys having     permissions of vpc and network firewall
+4. **Initialize Terraform:**
    ```bash
    cd terraform
    terraform init
    ```
-3. **Review the plan:**
+5. **Review the plan:**
    ```bash
    terraform plan
    ```
-4. **Apply the configuration:**
+6. **Apply the configuration:**
    ```bash
    terraform apply
    ```
