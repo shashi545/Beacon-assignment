@@ -62,3 +62,4 @@ terraform destroy
 
 - A backend configuration file is included here, which is typically used in real-time scenarios to store Terraform state files in an S3 bucket.  
 - In this assignment, it is added only as an example and is **not implemented**.
+- Here i shared the whole architecture in single main.tf , where we can do creating seprate modules for seprate services and we can call all services through one main.tf , where the modules can be reusable .
