@@ -3,7 +3,7 @@
 # AWS VPC + Network Firewall Terraform Assignment
 
 ## Overview
-This Terraform configuration provisions a secure AWS VPC network across 3 Availability Zones in a single region, with public and private subnets, NAT Gateway, Internet Gateway, Vpc Endpoints and AWS Network Firewall integration. All major parameters are configurable via variables.
+This Terraform configuration provisions a secure AWS VPC network across 3 Availability Zones in a single region, with public and private subnets, NAT Gateway, Internet Gateway and AWS Network Firewall integration. All major parameters are configurable via variables.
 
 ## Features
 - VPC spanning 3 AZs (configurable)
