@@ -89,24 +89,24 @@ resource "aws_route_table_association" "beacon_public" {
 }
 
 resource "aws_route_table" "beacon_private" {
-  vpc_id = aws_vpc.beacon_vpc.id
+   vpc_id = aws_vpc.beacon_vpc.id
 
-  # Route all outbound traffic from private subnets to the NAT Gateway
-  route {
-    cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id
-  }
+   # Route all outbound traffic from private subnets to the NAT Gateway
+   route {
+     cidr_block = "0.0.0.0/0"
+     nat_gateway_id = aws_nat_gateway.nat.id
+   }
 
-  tags = {
-    Name = "beacon_private-route-table"
-  }
-}
+   tags = {
+     Name = "beacon_private-route-table"
+   }
+ }
 
-resource "aws_route_table_association" "beacon_private" {
-  count          = 3
-  subnet_id      = aws_subnet.beacon_private[count.index].id
-  route_table_id = aws_route_table.beacon_private.id
-}
+ resource "aws_route_table_association" "beacon_private" {
+   count          = 3
+   subnet_id      = aws_subnet.beacon_private[count.index].id
+   route_table_id = aws_route_table.beacon_private.id
+ }
 
 
 
@@ -222,58 +222,6 @@ resource "aws_networkfirewall_firewall" "beacon_firewall" {
 }
 
 
-# GATEWAY LOAD BALANCER VPC ENDPOINT
-resource "aws_vpc_endpoint" "network_firewall_gwlb" {
-  vpc_id            = aws_vpc.beacon_vpc.id
-  service_name      = "com.amazonaws.${var.region}.network-firewall"
-  vpc_endpoint_type = "GatewayLoadBalancer"
-  subnet_ids        = [for subnet in aws_subnet.beacon_firewall : subnet.id]
-
-  tags = {
-    Name = "beacon-network-firewall-gwlb-endpoint"
-  }
-}
-
-# PRIVATE ROUTE TABLES TO FIREWALL
-resource "aws_route_table" "private_to_firewall" {
-  count  = 3
-  vpc_id = aws_vpc.beacon_vpc.id
-
-  route {
-    cidr_block      = "0.0.0.0/0"
-    vpc_endpoint_id = aws_vpc_endpoint.network_firewall_gwlb.id
-  }
-
-  tags = {
-    Name = "private-fw-route-table-${count.index}"
-  }
-}
-
-resource "aws_route_table_association" "private_fw_assoc" {
-  count          = 3
-  subnet_id      = aws_subnet.beacon_private[count.index].id
-  route_table_id = aws_route_table.private_to_firewall[count.index].id
-}
-
-7. FIREWALL TO NAT ROUTING (if firewall needs outbound internet)
-resource "aws_route_table" "firewall_to_nat" {
-  vpc_id = aws_vpc.beacon_vpc.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id
-  }
-
-  tags = {
-    Name = "fw-to-nat-route"
-  }
-}
-
-resource "aws_route_table_association" "fw_assoc" {
-  count          = 3
-  subnet_id      = aws_subnet.beacon_firewall[count.index].id
-  route_table_id = aws_route_table.firewall_to_nat.id
-}
 
 
 

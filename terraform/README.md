@@ -1,8 +1,9 @@
 
+
 # AWS VPC + Network Firewall Terraform Assignment
 
 ## Overview
-This Terraform configuration provisions a secure AWS VPC network across 3 Availability Zones in a single region, with public and private subnets, NAT Gateway, Internet Gateway, and AWS Network Firewall integration. All major parameters are configurable via variables.
+This Terraform configuration provisions a secure AWS VPC network across 3 Availability Zones in a single region, with public and private subnets, NAT Gateway, Internet Gateway, Vpc Endpoints and AWS Network Firewall integration. All major parameters are configurable via variables.
 
 ## Features
 - VPC spanning 3 AZs (configurable)
@@ -38,20 +39,11 @@ This Terraform configuration provisions a secure AWS VPC network across 3 Availa
   - Private subnets route traffic to the NAT Gateway for outbound internet access.
   - Network Firewall is deployed in dedicated subnets in each AZ.
 - **Firewall Inspection:**
-  - Firewall rules inspect and control traffic, but due to AWS limitations, Terraform cannot directly route private subnet traffic to the firewall endpoint ENI. By default, private subnet traffic is routed to the NAT Gateway. For full inspection, you must manually update the private subnet route table after deployment to point to the firewall endpoint ENI.
+  - Firewall rules inspect and control outbound traffic from private subnets, but traffic is routed to the NAT Gateway by default (as implemented in main.tf).
   - Stateless and stateful rules are used to control outbound traffic as per requirements.
+  - Private-subnets -> Firewall -> Nat Gateway -> Internet
 
-## Manual Step for Full Traffic Inspection
-After deploying with Terraform, manually update the private subnet route table:
-- Set the default route (`0.0.0.0/0`) to the Network Firewall endpoint ENI in the firewall subnet (find the ENI in the AWS Console after deployment).
-- Ensure the firewall subnet route table has a default route to the NAT Gateway.
 
-## Assumptions & Limitations
-- The configuration assumes 3 AZs are available in the selected region.
-- AWS Network Firewall incurs additional costs.
-- CIDR ranges must not overlap and should be chosen carefully.
-- The sample firewall rules are basic and can be extended as needed.
-- Full traffic inspection requires a manual route table update post-deployment.
 
 ## File Structure
 - `main.tf`: Main resources and logic
@@ -66,4 +58,7 @@ terraform destroy
 
 ---
 
-For any issues or questions, please refer to the official AWS and Terraform documentation.
+## Note
+
+- A backend configuration file is included here, which is typically used in real-time scenarios to store Terraform state files in an S3 bucket.  
+- In this assignment, it is added only as an example and is **not implemented**.
